@@ -1,0 +1,659 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+      xmlns:pf="http://jsf.playerfinder.net/components">
+
+    <h:head>
+        <title>Facelet Title</title>
+
+    </h:head>
+    <h:body>
+        <ui:composition template="/templates/library_template.xhtml">
+            <ui:define name="books_count">
+                <h:outputText value="#{msg.book_count}: #{bookListController.totalBooksCount}" id="booksCount"></h:outputText> 
+            </ui:define>
+            <ui:define name="title">
+                #{msg.scientific_library}
+            </ui:define>
+            <ui:define name="content">
+                <h:form id="booksForm" enctype="multipart/form-data">
+                    <h:panelGrid styleClass="admin_panel" rendered="#{request.isUserInRole('admin')}">
+                        <!-- Меню работы с entities -->
+                        <h:panelGrid id ="admin_tools" styleClass="admin_tools" columns="5" rendered="#{request.isUserInRole('admin') and
+                                                                                                        !bookListController.editMode and 
+                                                                                                        !bookListController.addingMode and 
+                                                                                                        !authorController.editMode and 
+                                                                                                        !authorController.addingMode and 
+                                                                                                        !subjectController.editMode and 
+                                                                                                        !subjectController.addingMode and 
+                                                                                                        !publisherController.editMode and 
+                                                                                                        !publisherController.addingMode and 
+                                                                                                        !userController.editMode and 
+                                                                                                        !userController.addingMode}">   
+                            <h:column>
+                                <p>
+                                    <h:commandLink action="#{bookListController.showAdding}">
+                                        <h:outputText value="#{msg.add_book}"></h:outputText>
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandLink>  
+                                </p>
+                                <p>
+                                    <h:commandLink action="#{bookListController.showEdit}">
+                                        <h:outputText value="#{msg.edit_books}"></h:outputText>
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandLink>
+                                </p> 
+                            </h:column>
+                            <h:column>
+                                <p>
+                                    <h:commandLink action="#{authorController.showAdding}">
+                                        <h:outputText value="#{msg.add_author}"></h:outputText>
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandLink>  
+                                </p>
+                                <p>
+                                    <h:commandLink action="#{authorController.showEdit}">
+                                        <h:outputText value="#{msg.edit_author}"></h:outputText>
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandLink>
+                                </p> 
+                            </h:column>
+                            <h:column>
+                                <p>
+                                    <h:commandLink action="#{subjectController.showAdding}">
+                                        <h:outputText value="#{msg.add_subject}"></h:outputText>
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandLink>  
+                                </p>
+                                <p>
+                                    <h:commandLink action="#{subjectController.showEdit}">
+                                        <h:outputText value="#{msg.edit_subject}"></h:outputText>
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandLink>
+                                </p> 
+                            </h:column>
+                            <h:column>
+                                <p>
+                                    <h:commandLink action="#{publisherController.showAdding}">
+                                        <h:outputText value="#{msg.add_publisher}"></h:outputText>
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandLink>  
+                                </p>
+                                <p>
+                                    <h:commandLink action="#{publisherController.showEdit}">
+                                        <h:outputText value="#{msg.edit_publisher}"></h:outputText>
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandLink>
+                                </p> 
+                            </h:column>
+                            <h:column>
+                                <p>
+                                    <h:commandLink action="#{userController.showAdding}">
+                                        <h:outputText value="#{msg.create_user}"></h:outputText>
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandLink>  
+                                </p>
+                                <p>
+                                    <h:commandLink action="#{userController.showEdit}">
+                                        <h:outputText value="#{msg.change_user}"></h:outputText>
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandLink>
+                                </p> 
+                            </h:column>
+                        </h:panelGrid>
+
+                        <!-- Таблица с кнопками для редактирования книг -->
+                        <h:panelGrid columns="3" rendered="#{request.isUserInRole('admin') and bookListController.editMode}">
+                            <h:column>
+                                <p>
+                                    <h:commandButton action="#{bookListController.updateBooks()}" value="#{msg.edit}">
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandButton>
+                                </p>
+                            </h:column>
+                            <h:column>
+                                <p>                      
+                                    <h:commandButton action="#{bookListController.deleteBooks()}" value="#{msg.delete_chosen_books}">
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandButton>
+                                </p>
+                            </h:column>
+                            <h:column>
+                                <p>
+                                    <h:commandButton immediate="true" action="#{bookListController.cancelEditMode()}" value="#{msg.cancel}">
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandButton>  
+                                </p>
+                            </h:column>
+                        </h:panelGrid>
+                        <!-- Таблица с кнопками для добавления книги -->
+                        <h:panelGrid columns="2" rendered="#{request.isUserInRole('admin') and bookListController.addingMode}">
+                            <h:column>
+                                <p>
+                                    <h:commandButton action="#{bookListController.addBook()}" value="#{msg.add_book}">
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandButton>
+                                </p>
+                            </h:column>
+                            <h:column>
+                                <p>
+                                    <h:commandButton immediate="true" action="#{bookListController.cancelAddingMode()}" value="#{msg.cancel}">
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandButton>
+                                </p>
+                            </h:column>
+                        </h:panelGrid>
+
+                        <!-- Таблица с кнопками для редактирования автора -->
+                        <h:panelGrid columns="3" rendered="#{request.isUserInRole('admin') and authorController.editMode}">
+                            <h:column>
+                                <p>
+                                    <h:commandButton action="#{authorController.updateAuthor()}" value="#{msg.edit_author}">
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandButton>
+                                </p>
+                            </h:column>
+                            <h:column>
+                                <p>                      
+                                    <h:commandButton action="#{authorController.deleteAuthor()}" value="#{msg.delete}">
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandButton>
+                                </p>
+                            </h:column>
+                            <h:column>
+                                <p>
+                                    <h:commandButton immediate="true" action="#{authorController.cancelEditMode()}" value="#{msg.cancel}">
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandButton>  
+                                </p>
+                            </h:column>
+                        </h:panelGrid>                
+                        <!-- Таблица с кнопками для добавления автора -->
+                        <h:panelGrid columns="2" rendered="#{request.isUserInRole('admin') and authorController.addingMode}">
+                            <h:column>
+                                <p>
+                                    <h:commandButton action="#{authorController.addAuthor()}" value="#{msg.add_author}">
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandButton>
+                                </p>
+                            </h:column>
+                            <h:column>
+                                <p>
+                                    <h:commandButton immediate="true" action="#{authorController.cancelAddingMode()}" value="#{msg.cancel}">
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandButton>
+                                </p>
+                            </h:column>
+                        </h:panelGrid>
+
+                        <!-- Таблица с кнопками для редактирования предмета -->
+                        <h:panelGrid columns="3" rendered="#{request.isUserInRole('admin') and subjectController.editMode}">
+                            <h:column>
+                                <p>
+                                    <h:commandButton action="#{subjectController.updateSubject()}" value="#{msg.edit_subject}">
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandButton>
+                                </p>
+                            </h:column>
+                            <h:column>
+                                <p>                      
+                                    <h:commandButton action="#{subjectController.deleteSubject()}" value="#{msg.delete}">
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandButton>
+                                </p>
+                            </h:column>
+                            <h:column>
+                                <p>
+                                    <h:commandButton immediate="true" action="#{subjectController.cancelEditMode()}" value="#{msg.cancel}">
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandButton>  
+                                </p>
+                            </h:column>
+                        </h:panelGrid>
+                        <!-- Таблица с кнопками для добавления предмета -->
+                        <h:panelGrid columns="2" rendered="#{request.isUserInRole('admin') and subjectController.addingMode}">
+                            <h:column>
+                                <p>
+                                    <h:commandButton action="#{subjectController.addSubject()}" value="#{msg.add_subject}">
+                                        <f:ajax onevent="showProgress" execute="@form" render=":subjectsList @form"/>
+                                    </h:commandButton>
+                                </p>
+                            </h:column>
+                            <h:column>
+                                <p>
+                                    <h:commandButton immediate="true" action="#{subjectController.cancelAddingMode()}" value="#{msg.cancel}">
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandButton>
+                                </p>
+                            </h:column>
+                        </h:panelGrid>
+
+                        <!-- Таблица с кнопками для редактирования издательства -->
+                        <h:panelGrid columns="3" rendered="#{request.isUserInRole('admin') and publisherController.editMode}">
+                            <h:column>
+                                <p>
+                                    <h:commandButton action="#{publisherController.updatePublisher()}" value="#{msg.edit_publisher}">
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandButton>
+                                </p>
+                            </h:column>
+                            <h:column>
+                                <p>                      
+                                    <h:commandButton action="#{publisherController.deletePublisher()}" value="#{msg.delete}">
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandButton>
+                                </p>
+                            </h:column>
+                            <h:column>
+                                <p>
+                                    <h:commandButton immediate="true" action="#{publisherController.cancelEditMode()}" value="#{msg.cancel}">
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandButton>  
+                                </p>
+                            </h:column>
+                        </h:panelGrid>
+                        <!-- Таблица с кнопками для добавления издательства -->
+                        <h:panelGrid columns="2" rendered="#{request.isUserInRole('admin') and publisherController.addingMode}">
+                            <h:column>
+                                <p>
+                                    <h:commandButton action="#{publisherController.addPublisher()}" value="#{msg.add_publisher}">
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandButton>
+                                </p>
+                            </h:column>
+                            <h:column>
+                                <p>
+                                    <h:commandButton immediate="true" action="#{publisherController.cancelAddingMode()}" value="#{msg.cancel}">
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandButton>
+                                </p>
+                            </h:column>
+                        </h:panelGrid>
+
+                        <!-- Таблица с кнопками для изменения пользователя -->
+                        <h:panelGrid columns="2" rendered="#{request.isUserInRole('admin') and userController.editMode}">
+                            <h:column>
+                                <p>
+                                    <h:commandButton action="#{userController.changeUser()}" value="#{msg.edit}">
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandButton>
+                                </p>
+                            </h:column>
+                            <h:column>
+                                <p>
+                                    <h:commandButton immediate="true" action="#{userController.cancelEditMode()}" value="#{msg.cancel}">
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandButton>  
+                                </p>
+                            </h:column>
+                        </h:panelGrid>
+                        <!-- Таблица с кнопками для добавления издательства -->
+                        <h:panelGrid columns="2" rendered="#{request.isUserInRole('admin') and userController.addingMode}">
+                            <h:column>
+                                <p>
+                                    <h:commandButton action="#{userController.createUser()}" value="#{msg.create_user}">
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandButton>
+                                </p>
+                            </h:column>
+                            <h:column>
+                                <p>
+                                    <h:commandButton immediate="true" action="#{userController.cancelAddingMode()}" value="#{msg.cancel}">
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                    </h:commandButton>
+                                </p>
+                            </h:column>
+                        </h:panelGrid>
+                    </h:panelGrid>
+
+                    <h:panelGrid styleClass="edit_tables" rendered="#{request.isUserInRole('admin') and
+                                                                      (bookListController.addingMode or 
+                                                                      authorController.editMode or 
+                                                                      authorController.addingMode or 
+                                                                      subjectController.editMode or 
+                                                                      subjectController.addingMode or 
+                                                                      publisherController.editMode or 
+                                                                      publisherController.addingMode or 
+                                                                      userController.editMode or 
+                                                                      userController.addingMode)}">
+                        <!-- Таблица для добавления книги -->
+                        <h:dataTable id="bookAdd" value="#{bookListController.oneBook}" rendered="#{bookListController.addingMode}"  var="newBook" columnClasses="col1, col2"> 
+                            <h:column>
+                                <h:panelGrid>
+                                    <strong>#{msg.image}</strong>
+                                    <h:inputFile value="#{newBook.imagePart}"/>
+                                    <strong>#{msg.content}</strong>
+                                    <h:inputFile value="#{newBook.contentPart}"/>
+                                </h:panelGrid>
+                            </h:column>
+                            <h:column>
+                                <div>
+                                    <p>
+                                        <strong>#{msg.book_name}: </strong>
+                                        <h:inputText value="#{newBook.name}" styleClass="edit"/>
+                                    </p>
+
+                                    <p>
+                                        <strong>#{msg.author_name}: </strong>
+                                        <h:panelGroup id="author_name">
+                                            <h:selectOneMenu styleClass="select_author" label="Выберите автора" value="#{newBook.authorId}">
+                                                <f:selectItems value="#{authorController.authorList}" var="a"
+                                                               itemLabel="#{a.fio}"
+                                                               itemValue="#{a.id}"/>
+                                            </h:selectOneMenu>
+                                        </h:panelGroup>
+                                    </p>
+
+                                    <p>
+                                        <strong>#{msg.page_count}: </strong>
+                                        <h:inputText value="#{newBook.pageCount}" styleClass="edit"/>
+                                    </p>
+
+                                    <p>
+                                        <strong>#{msg.publisher}: </strong>
+                                        <h:selectOneMenu styleClass="select_publisher" label="Выберите издателя" value="#{newBook.publisherId}">
+                                            <f:selectItems value="#{publisherController.publisherList}" var="p"
+                                                           itemLabel="#{p.name}"
+                                                           itemValue="#{p.id}"/>
+                                        </h:selectOneMenu>
+                                    </p>
+
+                                    <p>
+                                        <strong>#{msg.publishing_year}: </strong>
+                                        <h:inputText value="#{newBook.publishingYear}" styleClass="edit"/>
+                                    </p>
+
+                                    <p>
+                                        <strong>#{msg.extension}: </strong>
+                                        <h:inputText value="#{newBook.extension}" styleClass="edit"/>
+                                    </p>
+
+                                    <p>
+                                        <strong>#{msg.subject}: </strong>
+                                        <h:selectOneMenu styleClass="select_subject" label="Выберите предмет" value="#{newBook.subjectId}">
+                                            <f:selectItems  value="#{subjectController.subjectList}" var="s"
+                                                            itemLabel="#{s.name}"
+                                                            itemValue="#{s.id}"/>
+                                        </h:selectOneMenu>
+                                    </p>
+                                </div>
+                            </h:column>
+                        </h:dataTable>
+                        <!-- Таблица для добавления автора -->
+                        <h:dataTable id="authorAdd" value="#{authorController.author}" rendered="#{authorController.addingMode}"  var="newAuthor" columnClasses="col2">
+                            <h:column>
+                                <p>
+                                    <strong>#{msg.author_fio}: </strong>
+                                    <h:inputText value="#{newAuthor.fio}" styleClass="edit"/>
+                                </p>
+                            </h:column>
+                        </h:dataTable>
+                        <!-- Таблица для добавления предмета -->
+                        <h:dataTable id="subjectAdd" value="#{subjectController.subject}" rendered="#{subjectController.addingMode}"  var="newSubject" columnClasses="col2">
+                            <h:column>
+                                <p>
+                                    <strong>#{msg.name}: </strong>
+                                    <h:inputText value="#{newSubject.name}" styleClass="edit"/>
+                                </p>
+                            </h:column>
+                        </h:dataTable>
+                        <!-- Таблица для добавления издателя -->
+                        <h:dataTable id="publisherAdd" value="#{publisherController.publisher}" rendered="#{publisherController.addingMode}"  var="newPublisher" columnClasses="col2">
+                            <h:column>
+                                <p>
+                                    <strong>#{msg.name}: </strong>
+                                    <h:inputText value="#{newPublisher.name}" styleClass="edit"/>
+                                </p>
+                            </h:column>
+                        </h:dataTable>
+                        <!-- Таблица для добавления пользователя -->
+                        <h:dataTable id="userAdd" value="#{userController.user}" var="userAdd" rendered="#{userController.addingMode}" columnClasses="col2">
+                            <h:column>
+                                <p>
+                                    <strong>#{msg.input_name}: </strong>
+                                    <h:inputText value="#{userAdd.username}" styleClass="edit"/>
+                                </p>
+                                <p>
+                                    <strong>#{msg.password}: </strong>
+                                    <h:inputText value="#{userAdd.password}" styleClass="edit"/>
+                                </p>
+                                <p>
+                                    <strong>#{msg.user_role}: </strong>
+                                    <h:selectOneMenu styleClass="select_group" value="#{userController.group}">
+                                        <f:selectItems value="#{userController.groupList}"/>
+                                    </h:selectOneMenu>
+                                </p>
+                            </h:column>
+                        </h:dataTable>
+
+
+                        <!-- Таблица для редактирования автора -->
+                        <h:dataTable id="authorEdit" value="#{authorController.author}" var="authorEdit" rendered="#{authorController.editMode}" columnClasses="col4, col5">
+                            <h:column>
+                                <h:selectOneMenu styleClass="select_author" label="#{authorEdit.fio}" value="#{authorEdit.id}">
+                                    <f:selectItems value="#{authorController.authorList}" var="a"
+                                                   itemLabel="#{a.fio}"
+                                                   itemValue="#{a.id}"/>
+                                </h:selectOneMenu>
+                            </h:column>
+                            <h:column>
+                                <p>
+                                    <strong>#{msg.author_fio}: </strong>
+                                    <h:inputText value="#{authorEdit.fio}" styleClass="edit"/>
+                                </p>
+                            </h:column>
+                        </h:dataTable>
+                        <!-- Таблица для редактирования предмета -->
+                        <h:dataTable id="subjectEdit" value="#{subjectController.subject}" var="subjectEdit" rendered="#{subjectController.editMode}" columnClasses="col4, col5">
+                            <h:column>
+                                <h:selectOneMenu styleClass="select_subject" label="#{subjectEdit.name}" value="#{subjectEdit.id}">
+                                    <f:selectItems value="#{subjectController.subjectList}" var="s"
+                                                   itemLabel="#{s.name}"
+                                                   itemValue="#{s.id}"/>
+                                </h:selectOneMenu>
+                            </h:column>
+                            <h:column>
+                                <p>
+                                    <strong>#{msg.name}: </strong>
+                                    <h:inputText value="#{subjectEdit.name}" styleClass="edit"/>
+                                </p>
+                            </h:column>
+                        </h:dataTable>
+                        <!-- Таблица для редактирования издателя -->
+                        <h:dataTable id="publisherEdit" value="#{publisherController.publisher}" var="publisherEdit" rendered="#{publisherController.editMode}" columnClasses="col4, col5">
+                            <h:column>
+                                <h:selectOneMenu styleClass="select_publisher" label="#{publisherEdit.name}" value="#{publisherEdit.id}">
+                                    <f:selectItems value="#{publisherController.publisherList}" var="p"
+                                                   itemLabel="#{p.name}"
+                                                   itemValue="#{p.id}"/>
+                                </h:selectOneMenu>
+                            </h:column>
+                            <h:column>
+                                <p>
+                                    <strong>#{msg.name}: </strong>
+                                    <h:inputText value="#{publisherEdit.name}" styleClass="edit"/>
+                                </p>
+                            </h:column>
+                        </h:dataTable>
+                        <!-- Таблица для редактирования пользователя -->
+                        <h:dataTable id="userEdit" value="#{userController.user}" var="userEdit" rendered="#{userController.editMode}" columnClasses="col4, col5">
+                            <h:column>
+                                <h:selectOneMenu styleClass="select_user" value="#{userEdit.username}">
+                                    <f:selectItems value="#{userController.userList}" var="u" itemLabel="#{u.username}" itemValue="#{u.username}"/>
+                                </h:selectOneMenu>
+                            </h:column>
+                            <h:column>
+                                <p>
+                                    <strong>#{msg.password}: </strong>
+                                    <h:inputText value="#{userEdit.password}" styleClass="edit"/>
+                                </p>
+                                <p>
+                                    <strong>#{msg.user_role}: </strong>
+                                    <h:selectOneMenu styleClass="select_group" value="#{userController.group}">
+                                        <f:selectItems value="#{userController.groupList}"/>
+                                    </h:selectOneMenu>
+                                </p>
+                            </h:column>
+                        </h:dataTable>
+                    </h:panelGrid>
+
+                    <!-- Таблица для отображения и редактирования списка книг -->
+                    <h:dataTable id="booksList" styleClass="main_table" value="#{bookListController.currentBookList}" var="b" rowClasses="unevenRow, evenRow" columnClasses="col1, col2"> 
+                        <h:column>
+                            <p>
+                                <h:selectBooleanCheckbox value="#{b.edit}" rendered="#{bookListController.editMode}">
+                                    <f:ajax onevent="showProgress" execute="@form" render="@form"/>
+                                </h:selectBooleanCheckbox>
+                            </p>
+                            <h:outputLink styleClass="content_link" value="#{request.contextPath}/GetContent"  target="_blank" rendered="#{!b.edit}">                                                             
+                                <h:graphicImage value="/ShowImage?id=#{b.id}" width="160" height="220"/>
+                                <f:param name="id" value="#{b.id}"/>
+                                <f:param name="extension" value="#{b.extension}"/>
+                                <f:param name="saveItem" value="false"/>
+                                <f:param name="filename" value="#{b.name}"/>
+                                <f:param name="author" value="#{b.author}"/>
+                            </h:outputLink>
+                            <h:panelGrid rendered="#{!b.edit and !bookListController.editMode}">
+                                <pf:rating totalStars="5" step="1" value="#{b.rating}" disabled="true">
+                                    <h:outputText value="(#{b.totalRatesAmount})"/>
+                                </pf:rating>
+                            </h:panelGrid>
+                            <h:panelGrid style="padding-left: 20px;" rendered="#{!b.edit and !bookListController.editMode and b.currentRate == 0}">
+                                <pf:rating totalStars="5" step="0.5" value="#{b.currentRate}">
+                                    <f:ajax event="change" listener="#{b.rate}" render="@form" />
+                                    <h:outputText value="#{msg.your_rate}:"/>
+                                </pf:rating>
+                            </h:panelGrid>
+                            <h:panelGrid style="padding-left: 20px;" rendered="#{!b.edit and !bookListController.editMode and b.currentRate > 0}">
+                                <h:outputText value="#{msg.your_rate}: #{b.currentRate}"/>
+                            </h:panelGrid>
+
+                            <h:panelGrid rendered="#{bookListController.editMode and b.edit}">
+                                <strong>#{msg.image}</strong>
+                                <h:inputFile value="#{b.imagePart}"/>
+                                <strong>#{msg.content}</strong>
+                                <h:inputFile value="#{b.contentPart}"/>
+                            </h:panelGrid>
+                        </h:column>
+
+                        <h:column>
+                            <div>
+                                <p>
+                                    <h:outputLink value="#{request.contextPath}/GetContent" target="_blank" rendered="#{!b.edit}">
+                                        <h:outputText value="#{b.name}" ></h:outputText>
+                                        <f:param name="id" value="#{b.id}"/>
+                                        <f:param name="extension" value="#{b.extension}"/>
+                                        <f:param name="saveItem" value="false"/>
+                                        <f:param name="filename" value="#{b.name}"/>
+                                        <f:param name="author" value="#{b.author}"/>
+                                    </h:outputLink>
+                                    <h:panelGroup id="book_name" rendered="#{bookListController.editMode and b.edit}">
+                                        <strong>#{msg.name}: </strong>
+                                        <h:inputText value="#{b.name}" styleClass="edit"/>
+                                    </h:panelGroup>
+                                </p>
+
+                                <p>
+                                    <strong>#{msg.author_name}: </strong>
+                                    <h:outputText value="#{b.author}" rendered="#{!b.edit}"/>
+                                    <h:panelGroup id="author_name" rendered="#{bookListController.editMode and b.edit}">
+                                        <h:selectOneMenu styleClass="select_author" label="#{b.author}" value="#{b.authorId}">
+                                            <f:selectItems value="#{authorController.authorList}" var="a"
+                                                           itemLabel="#{a.fio}"
+                                                           itemValue="#{a.id}"/>
+                                        </h:selectOneMenu>
+                                    </h:panelGroup>
+                                </p>
+
+                                <p>
+                                    <strong>#{msg.page_count}: </strong> 
+                                    <h:outputText value="#{b.pageCount} #{msg.pages}" rendered="#{!b.edit}"/>
+
+                                    <h:inputText value="#{b.pageCount}" styleClass="edit" rendered="#{bookListController.editMode and b.edit}"/>
+                                </p>
+
+                                <p>
+                                    <strong>#{msg.publisher}: </strong> 
+                                    <h:outputText value="#{b.publisher}" rendered="#{!b.edit}"/>
+                                    <h:panelGroup id="publisher_name" rendered="#{bookListController.editMode and b.edit}">
+                                        <h:selectOneMenu styleClass="select_publisher" label="#{b.publisher}" value="#{b.publisherId}">
+                                            <f:selectItems value="#{publisherController.publisherList}" var="p"
+                                                           itemLabel="#{p.name}"
+                                                           itemValue="#{p.id}"/>
+                                        </h:selectOneMenu>
+                                    </h:panelGroup>
+                                </p>
+
+                                <p>
+                                    <strong>#{msg.publishing_year}: </strong> 
+                                    <h:outputText value="#{b.publishingYear} г." rendered="#{!b.edit}"/>
+                                    <h:inputText value="#{b.publishingYear}" styleClass="edit" rendered="#{bookListController.editMode and b.edit}"/>
+                                </p>
+
+                                <p>
+                                    <strong>#{msg.extension}: </strong> 
+                                    <h:outputText value="#{b.extension}" rendered="#{!b.edit}"/>
+                                    <h:inputText value="#{b.extension}" styleClass="edit" rendered="#{bookListController.editMode and b.edit}"/>
+                                </p>
+
+                                <h:panelGroup id="subject_name" rendered="#{bookListController.editMode and b.edit}">
+                                    <strong>#{msg.subject}: </strong>
+                                    <h:selectOneMenu styleClass="select_subject" label="#{b.subject}" value="#{b.subjectId}">
+                                        <f:selectItems  value="#{subjectController.subjectList}" var="s"
+                                                        itemLabel="#{s.name}"
+                                                        itemValue="#{s.id}"/>
+                                    </h:selectOneMenu>
+                                </h:panelGroup>
+
+                                <p>
+                                    <h:panelGroup rendered="#{!bookListController.editMode}">
+                                        <h:outputLink styleClass="content_link" value="#{request.contextPath}/GetContent"  target="_blank">   
+                                            <h:outputText value="#{msg.read}"></h:outputText>
+                                            <f:param name="id" value="#{b.id}"/>
+                                            <f:param name="extension" value="#{b.extension}"/>
+                                            <f:param name="saveItem" value="false"/>
+                                            <f:param name="filename" value="#{b.name}"/>
+                                            <f:param name="author" value="#{b.author}"/>
+                                        </h:outputLink>
+
+                                        <h:outputLink styleClass="save_link" value="#{request.contextPath}/GetContent" target="_blank"> 
+                                            <h:outputText value="#{msg.download}"></h:outputText>
+                                            <f:param name="id" value="#{b.id}"/>
+                                            <f:param name="extension" value="#{b.extension}"/>
+                                            <f:param name="saveItem" value="true"/>
+                                            <f:param name="filename" value="#{b.name}"/>
+                                            <f:param name="author" value="#{b.author}"/>
+                                        </h:outputLink>
+                                    </h:panelGroup>
+                                </p>
+                            </div>
+                        </h:column>
+                    </h:dataTable>
+                </h:form>
+            </ui:define>
+
+            <ui:define name="paginator">
+                <h:form>
+                    <h:selectOneMenu styleClass="books_on_page_dropdown" value="#{bookListController.booksOnPage}" valueChangeListener="#{bookListController.changeBooksCountOnPage}">
+                        <f:selectItem itemValue="5" />
+                        <f:selectItem itemValue="10" />
+                        <f:selectItem itemValue="15" />
+                        <f:ajax event="change" execute="@form" onevent="showProgress" render=":booksForm :booksForm:booksList :pages1 :pages2"  />
+                    </h:selectOneMenu>
+                    #{msg.pager}
+                    <ui:repeat value="#{bookListController.pageNumbers}" var="pageNumber" >
+                        <h:outputText value="#{pageNumber}" rendered="#{pageNumber == bookListController.selectedPageNumber}" styleClass="selected_page"/>
+                        <h:commandLink value="#{pageNumber}" rendered="#{pageNumber != bookListController.selectedPageNumber}" styleClass="page_number">
+                            <f:param name="page_number" value="#{pageNumber}" />
+                            <f:ajax onevent="showProgress" event="click" render=":booksForm :booksForm:booksList :lettersForm :pages1 :pages2" listener="#{bookListController.selectPage()}"/>
+                        </h:commandLink>
+                    </ui:repeat>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

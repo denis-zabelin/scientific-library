@@ -1,0 +1,137 @@
+body {
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: normal;
+    margin: 80px 0;
+    background-color: #eaeaea;
+    background: url("#{resource['images:logo.png']}") center top no-repeat #5c2714; 
+}
+.main {
+    width: 600px;
+    height:390px;
+    margin:0 auto;
+    padding:20px;
+}
+.title {
+    color: #000;
+    text-align:center;
+    font-size:18px;
+    font-weight:bold;
+}
+
+.text{
+
+    padding-left:50px;
+    padding-right:50px;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+    margin-top: 0;	 
+    padding-right: 15px;
+    padding-left: 15px; 
+}
+
+h1 {
+    color: #ffffff;
+    text-align: center;
+    font-family: cursive;
+    text-shadow: 3px 3px 6px black;
+    font-size: 4em;
+    margin-bottom: 0;
+}
+
+.login_form{
+    padding-left:50px;
+    text-align: center;
+    padding: 20px;
+}
+
+.login_div{
+    background-color: #ffffff;
+    width:400px;
+    margin: 0 auto;
+    padding: 0;
+    height: 130px;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 40px;
+}
+
+.login_div p{
+    text-align: left;
+
+}
+
+.footer{
+    color:#cccccc;
+    text-align: center;
+    margin:50px;
+}
+
+.content{
+    height:150px;
+
+}
+
+.error{
+    color:#ff0000;
+    font-style: oblique;
+    font-size: 10px;
+
+}
+
+.login_button {
+	-moz-box-shadow:inset 0px 1px 0px 0px #f9eca0;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #f9eca0;
+	box-shadow:inset 0px 1px 0px 0px #f9eca0;
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #f0c911), color-stop(1, #f2ab1e) );
+	background:-moz-linear-gradient( center top, #f0c911 5%, #f2ab1e 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f0c911', endColorstr='#f2ab1e');
+	background-color:#f0c911;
+	-webkit-border-top-left-radius:0px;
+	-moz-border-radius-topleft:0px;
+	border-top-left-radius:0px;
+	-webkit-border-top-right-radius:0px;
+	-moz-border-radius-topright:0px;
+	border-top-right-radius:0px;
+	-webkit-border-bottom-right-radius:0px;
+	-moz-border-radius-bottomright:0px;
+	border-bottom-right-radius:0px;
+	-webkit-border-bottom-left-radius:0px;
+	-moz-border-radius-bottomleft:0px;
+	border-bottom-left-radius:0px;
+	text-indent:0;
+	border:1px solid #e65f44;
+	display:inline-block;
+	color:#c92200;
+	font-family:Arial;
+	font-size:15px;
+	font-weight:bold;
+	font-style:normal;
+	height:30px;
+	line-height:30px;
+	width:80px;
+	text-decoration:none;
+	text-align:center;
+	text-shadow:1px 1px 0px #ded17c;
+        margin-top: 10px;
+}
+.login_button:hover {
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #f2ab1e), color-stop(1, #f0c911) );
+	background:-moz-linear-gradient( center top, #f2ab1e 5%, #f0c911 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f2ab1e', endColorstr='#f0c911');
+	background-color:#f2ab1e;
+}.login_button:active {
+	position:relative;
+	top:1px;
+}
+
+/* This button was generated using CSSButtonGenerator.com */
+
+#loading_wrapper{
+    width: 50px;
+    position: fixed;
+    display: none;
+    vertical-align: top;
+}

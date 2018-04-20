@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+        <h:outputStylesheet library="css" name="style_main.css"  />
+    </h:head>
+    <h:body>
+        <ui:composition>
+            <div class="logo">
+                <h:graphicImage library="images" name="library.png" />
+            </div>
+            <div class="description">
+                <h3>#{msg.scientific_library}</h3>
+            </div>
+            <div>
+                <h:outputLink styleClass="xml_link" value="#{request.contextPath}/GetXML"  rendered="#{request.isUserInRole('admin')}">
+                    <h:outputText value="#{msg.download_xml}"/>
+                </h:outputLink>
+            </div>
+            <div class="welcome">
+                <p><h4>#{user.username}</h4></p>
+                <h:form>
+                    <h:commandLink action="#{user.logout()}" value="#{msg.exit}"/>
+                </h:form>
+            </div>
+            <div class="search_div">
+                <h:form styleClass="search_form">
+                    <h:inputText id="search_string" styleClass="search_string" value="#{bookListController.searchString}" valueChangeListener="#{bookListController.searchStringChanged}">
+                        <f:ajax  event="change" />
+                    </h:inputText>
+                    <h:commandButton value="#{msg.search}" styleClass="search_button">
+                        <f:ajax onevent="showProgress" execute="@form" render=":booksForm:booksList @form :pages1 :pages2 :booksCount" listener="#{bookListController.fillBooksBySearch()}"/>
+                    </h:commandButton>
+                </h:form>
+                <h:form styleClass="search_type">
+                    <h:selectOneMenu styleClass="search_type_dropdown" value="#{bookListController.searchType}" valueChangeListener="#{bookListController.searchTypeChanged}">
+                        <f:selectItems value="${searchTypeController.searchList}"/>
+                        <f:ajax event="change"/>
+                    </h:selectOneMenu>
+                </h:form>
+                <h:form styleClass="order_type">
+                    <h:selectOneMenu styleClass="order_type_dropdown" value="#{bookListController.orderType}" valueChangeListener="#{bookListController.orderTypeChanged}">
+                        <f:selectItems value="${orderTypeController.orderList}"/>
+                        <f:ajax event="change"/>
+                    </h:selectOneMenu>
+                </h:form>
+            </div>
+        </ui:composition>
+    </h:body>
+</html>
+

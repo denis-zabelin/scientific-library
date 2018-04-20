@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <f:view>  
+        <h:head>
+            <title>#{msg.scientific_library}</title>
+            <h:outputStylesheet library="css" name="style_index.css"  />
+            <h:outputScript library="js" name="library.js" target="head"/>
+        </h:head>
+        <h:body>
+            <div class="main">
+                <div class="content">
+                    <p class="title"><h1>#{msg.scientific_library}</h1></p>
+                </div>
+                <h:panelGroup id="login_div" styleClass="login_div" layout="block">
+                    <h:form styleClass="login_form" id="login_form">
+                        <table align="left" width="350">
+                            <tr>
+                                <td width="100" align="right">#{msg.input_name}: </td>
+                                <td width="200">
+                                    <h:inputText id="username" value="#{user.username}" required="true" requiredMessage="#{msg.login_required}"/>
+                                </td>
+                                <td width="100">
+                                    <div id="loading_wrapper">
+                                        <h:graphicImage library="images" name="ajax_loading.gif"/> 
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="right">#{msg.input_password}: </td>
+                                <td>
+                                    <h:inputSecret  id="password" value="#{user.password}" required="true" redisplay="true" requiredMessage="#{msg.password_required}"/>
+                                </td>
+                            </tr><tr>
+                                <td colspan="3">
+                                    <h:commandButton action="#{user.login()}" value="#{msg.entry}" styleClass="login_button" onclick="return checkValue(this.form, '#{msg.login_required}', '#{msg.password_required}');">
+                                        <f:ajax onevent="showProgress" execute="@form" render="@form" />
+                                    </h:commandButton>
+                                </td>
+                            </tr> 
+                            <tr>
+                                <td colspan="3">
+                                    <h:message id="loginError" for="login_form" styleClass="error"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </h:form>
+                </h:panelGroup>
+            </div>
+        </h:body>
+    </f:view>  
+</html>
